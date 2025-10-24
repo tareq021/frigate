@@ -23,10 +23,7 @@ snapshots:
 
 objects:
   track:
-    - person
-    - car
-    - dog
-    - cat
+    - person    
 
 ffmpeg:
   hwaccel_args: []
