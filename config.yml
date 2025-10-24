@@ -1,0 +1,32 @@
+mqtt:
+  enabled: false
+
+cameras:
+  garage_camera:
+    ffmpeg:
+      hwaccel_args: []
+      inputs:
+        - path: "rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/101"
+          roles:
+            - detect
+            - record
+          #input_args:
+           # - -rtsp_transport
+           # - tcp
+           # - -hwaccel
+           # - vaapi
+           # - -hwaccel_device
+           # - /dev/dri/renderD128
+           #- -hwaccel_output_format
+           # - yuv420p
+    detect:
+      enabled: true
+      fps: 5
+      width: 2880
+      height: 1616
+    record:
+      enabled: true
+
+detect:
+  enabled: true
+version: 0.16-0
