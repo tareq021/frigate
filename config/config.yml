@@ -1,32 +1,63 @@
 mqtt:
   enabled: false
 
+database:
+  path: /config/frigate.db
+
+detectors:
+  cpu1:
+    type: cpu
+
+record:
+  enabled: true
+  sync_recordings: false
+  retain:
+    days: 30  # keep recordings for 30 days
+
+snapshots:
+  enabled: true
+  timestamp: true
+  bounding_box: true
+  retain:
+    default: 7
+
+objects:
+  track:
+    - person
+    - car
+    - dog
+    - cat
+
+ffmpeg:
+  hwaccel_args: []
+
 cameras:
-  garage_camera:
+  GARAGE_CAM_001:
     ffmpeg:
-      hwaccel_args: []
       inputs:
-        - path: "rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/101"
+        # Low-res stream for detection
+        - path: rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/101
           roles:
             - detect
+        # High-res stream for recording
+        - path: rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/102
+          roles:
             - record
-          #input_args:
-           # - -rtsp_transport
-           # - tcp
-           # - -hwaccel
-           # - vaapi
-           # - -hwaccel_device
-           # - /dev/dri/renderD128
-           #- -hwaccel_output_format
-           # - yuv420p
     detect:
-      enabled: true
+      width: 640
+      height: 360
       fps: 5
-      width: 2880
-      height: 1616
+      enabled: true
+    motion:
+      enabled: true
     record:
       enabled: true
-
+      retain:
+        days: 30  # per-camera override if needed
+    snapshots:
+      enabled: true
+      bounding_box: true
+      timestamp: true
 detect:
   enabled: true
 version: 0.16-0
