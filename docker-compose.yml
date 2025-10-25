@@ -1,30 +1,18 @@
 services:
   frigate:
     container_name: frigate
-    privileged: true # this may not be necessary for all setups
-    restart: unless-stopped
-    stop_grace_period: 30s # allow enough time to shut down the various services
     image: ghcr.io/blakeblackshear/frigate:stable
-    shm_size: "512mb" # update for your cameras based on calculation above
-    #network_mode: host
-    devices:
-      - /dev/bus/usb:/dev/bus/usb # Passes the USB Coral, needs to be modified for other versions
-      - /dev/apex_0:/dev/apex_0 # Passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
-      - /dev/video11:/dev/video11 # For Raspberry Pi 4B
-      - /dev/dri/renderD128:/dev/dri/renderD128 # For intel hwaccel, needs to be updated for your hardware
+    privileged: true
+    restart: unless-stopped
+    shm_size: "256m"
     volumes:
+      - ./config/config.yml:/config/config.yml
+      - ./config:/config
+      - ./storage:/media/frigate
       - /etc/localtime:/etc/localtime:ro
-      - /home/tareq/frigate/config:/config
-      - /home/tareq/frigate/storage:/media/frigate
-      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
-        target: /tmp/cache
-        tmpfs:
-          size: 1000000000
+    devices: []  # no Coral or hardware acceleration
     ports:
-      - "8971:8971"
-      - "5000:5000" # Internal unauthenticated access. Expose carefully.
-      - "8554:8554" # RTSP feeds
-      - "8555:8555/tcp" # WebRTC over tcp
-      - "8555:8555/udp" # WebRTC over udp
+      - "5000:5000"   # Frigate web interface
+      - "1935:1935"   # RTMP (optional)
     environment:
-      FRIGATE_RTSP_PASSWORD: "password"
+      FRIGATE_RTSP_PASSWORD: "your_rtsp_password"
