@@ -1,38 +1,43 @@
 mqtt:
   enabled: false
+
 database:
   path: /config/frigate.db
+
 detectors:
   cpu1:
     type: cpu
+
 record:
   enabled: true
   sync_recordings: false
   retain:
-    days: 0  # disable continuous recording
+    days: 30  # keep recordings for 30 days
+
 snapshots:
   enabled: true
   timestamp: true
   bounding_box: true
   retain:
-    default: 30
+    default: 7
+
 objects:
   track:
-    - person
-  filters:
-    person:
-      min_area: 1500
-      threshold: 0.7
+    - person    
+
 ffmpeg:
   hwaccel_args: preset-rpi-64-h264
+
 cameras:
   GARAGE_CAM_001:
     ffmpeg:
       inputs:
-        - path: rtsp://admin:gara#3Cam@192.168.50.242:554/Streaming/Channels/102
+        # Low-res stream for detection
+        - path: rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/102
           roles:
             - detect
-        - path: rtsp://admin:gara#3Cam@192.168.50.242:554/Streaming/Channels/101
+        # High-res stream for recording
+        - path: rtsp://admin:gara#3Cam@192.168.50.62:554/Streaming/Channels/101
           roles:
             - record
     detect:
@@ -40,23 +45,12 @@ cameras:
       height: 360
       fps: 5
       enabled: true
-    objects:
-      track:
-        - person
-      filters:
-        person:
-          min_area: 1500
-          threshold: 0.7
     motion:
       enabled: true
     record:
       enabled: true
       retain:
-        days: 0  # no continuous recording
-        mode: motion  # only save motion segments
-      detections:
-        pre_capture: 10
-        post_capture: 15
+        days: 30  # per-camera override if needed
     snapshots:
       enabled: true
       bounding_box: true
