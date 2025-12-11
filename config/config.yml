@@ -9,7 +9,7 @@ record:
   enabled: true
   sync_recordings: false
   retain:
-    days: 0  # disable continuous recording
+    days: 1
 snapshots:
   enabled: true
   timestamp: true
@@ -53,10 +53,13 @@ cameras:
       enabled: true
       retain:
         days: 0  # no continuous recording
-        mode: motion  # only save motion segments
+        mode: active_objects  # only save during detecttions
       detections:
-        pre_capture: 10
-        post_capture: 15
+        pre_capture: 30
+        post_capture: 30
+        retain:
+          days: 10
+          mode: active_objects
     snapshots:
       enabled: true
       bounding_box: true
